@@ -180,7 +180,7 @@ public class Matrix {
                 for (int k = 0; k < length; k++) {
                     sum = sum + m1[c + k] * m2[k * length + j];
                 }
-                res [d + j] = sum;
+                res[d + j] = sum;
             }
         }
     }
