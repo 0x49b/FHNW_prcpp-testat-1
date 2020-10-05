@@ -23,6 +23,10 @@ public class MatrixMain {
         Matrix co = m.multiplyCpp(n);
         long cppEnd = System.currentTimeMillis();
 
+        System.out.println("Results of Multiply");
+        System.out.println(Arrays.toString(o.matrix));
+        System.out.println(Arrays.toString(co.matrix));
+
         System.out.println("Run JavaImpl takes : " + (endJava-startJava) + "ms");
         System.out.println("Run CPPImpl takes : " + (cppEnd-cppStart) + "ms");
 
@@ -39,6 +43,10 @@ public class MatrixMain {
         long startCPPPow = System.currentTimeMillis();
         Matrix cq = p.powerCpp(93);
         long endCPPPow = System.currentTimeMillis();
+
+        System.out.println("Results of Exponentiate");
+        System.out.println(Arrays.toString(q.matrix));
+        System.out.println(Arrays.toString(cq.matrix));
 
 
         System.out.println("Run JavaImpl takes : " + (endJavaPow-startJavaPow) + "ms");

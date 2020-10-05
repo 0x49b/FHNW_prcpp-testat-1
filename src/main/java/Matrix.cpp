@@ -8,6 +8,8 @@
 
 //https://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/functions.html
 
+
+// Multiply a
 void doMultiply(jdouble* matrixA, jdouble* matrixB, jdouble* matrixC, jint rowMatrixA, jint colMatrixA, jint colMatrixB){
 
 	// Multiply like in JavaImpl

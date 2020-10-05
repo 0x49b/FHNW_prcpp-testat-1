@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class Tests {
 	Matrix a, b, c, d, p, q;
 
-
-
 	@BeforeEach
 	void setUp() throws Exception {
 		a = new Matrix(3, 5, new double[] {1,2,3,4,5,2,3,4,5,6,3,4,5,6,7});
@@ -42,6 +40,7 @@ class Tests {
 		assertEquals(q.multiply(d), q);
 	}
 
+
 	@Test
 	void testMultiplyCpp() {
 		assertEquals(a.multiplyCpp(b), c);
@@ -57,6 +56,7 @@ class Tests {
 		assertEquals(d.power(2), d);
 		assertEquals(d.power(111), d);
 	}
+
 
 	@Test
 	void testPowerCpp() {
