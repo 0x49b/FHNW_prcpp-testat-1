@@ -1,3 +1,4 @@
+import javax.sound.midi.Soundbank;
 import java.util.Arrays;
 
 public class MatrixMain {
@@ -8,6 +9,8 @@ public class MatrixMain {
 
     public static void main(String[] args) {
 
+        System.out.println("Performance Tests End-2-End for multiplication and exponentiate");
+        System.out.println("-------------------------------------------------------------------------");
         System.out.println("Running Performance Test 500x400 Matrix multiply");
 
         Matrix m = new Matrix(500,6000);
@@ -22,10 +25,6 @@ public class MatrixMain {
         long cppStart = System.currentTimeMillis();
         Matrix co = m.multiplyCpp(n);
         long cppEnd = System.currentTimeMillis();
-
-        System.out.println("Results of Multiply");
-        System.out.println(Arrays.toString(o.matrix));
-        System.out.println(Arrays.toString(co.matrix));
 
         System.out.println("Run JavaImpl takes : " + (endJava-startJava) + "ms");
         System.out.println("Run CPPImpl takes : " + (cppEnd-cppStart) + "ms");
@@ -44,38 +43,22 @@ public class MatrixMain {
         Matrix cq = p.powerCpp(93);
         long endCPPPow = System.currentTimeMillis();
 
-        System.out.println("Results of Exponentiate");
-        System.out.println(Arrays.toString(q.matrix));
-        System.out.println(Arrays.toString(cq.matrix));
-
 
         System.out.println("Run JavaImpl takes : " + (endJavaPow-startJavaPow) + "ms");
         System.out.println("Run CPPImpl takes : " + (endCPPPow-startCPPPow) + "ms");
 
 
         /**
+         * Performance Tests End-2-End for multiplication and exponentiate
+         * -------------------------------------------------------------------------
          * Running Performance Test 500x400 Matrix multiply
-         * Run JavaImpl takes : 6478ms
-         * Run CPPImpl takes : 10411ms
+         * Run JavaImpl takes : 5185ms
+         * Run CPPImpl takes : 8816ms
          *
          * Running Performance Test 250x250 Matrix pow by 93
-         * Run JavaImpl takes : 1990ms
-         * Run CPPImpl takes : 4489ms
+         * Run JavaImpl takes : 1654ms
+         * Run CPPImpl takes : 4321ms
          */
 
     }
-
-    //https://stackoverflow.com/questions/45061338/get-human-readable-time-from-nanoseconds
-    private static String getReadableTime(Long nanos){
-
-        long tempSec    = nanos/(1000*1000*1000);
-        long sec        = tempSec % 60;
-        long min        = (tempSec /60) % 60;
-        long hour       = (tempSec /(60*60)) % 24;
-        long day        = (tempSec / (24*60*60)) % 24;
-
-        return String.format("%dd %dh %dm %ds", day,hour,min,sec);
-
-    }
-
 }
