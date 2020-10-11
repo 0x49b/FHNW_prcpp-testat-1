@@ -11,7 +11,6 @@
 
 // Multiply a
 void doMultiply(jdouble* matrixA, jdouble* matrixB, jdouble* matrixC, jint rowMatrixA, jint colMatrixA, jint colMatrixB){
-
 	// Multiply like in JavaImpl
     jdouble multiRes = 0.0;
     for (int i = 0; i<rowMatrixA; i++) {
@@ -24,12 +23,10 @@ void doMultiply(jdouble* matrixA, jdouble* matrixB, jdouble* matrixC, jint rowMa
             matrixC[d + j ] = multiRes;
         }
     }
-
 }
 
-
 JNIEXPORT void JNICALL Java_Matrix_powerC
-(JNIEnv *envPow, jobject jobj1, jdoubleArray matrixA, jdoubleArray matrixREsult, jint of, jint matrixSize)
+(JNIEnv *envPow, jobject jobj1, jdoubleArray matrixA, jdoubleArray matrixResult, jint of, jint matrixSize)
 {
 
 	jboolean copMatrixA;
@@ -37,27 +34,30 @@ JNIEXPORT void JNICALL Java_Matrix_powerC
 
     // get the Array elements
 	jdouble* newMatrixA = envPow->GetDoubleArrayElements(matrixA, &copMatrixA);
-	jdouble* newMatrixResult = envPow->GetDoubleArrayElements(matrixREsult, &copMatrixResult);
 
-    // Make temporary Array with same length as original array
     jint length = envPow->GetArrayLength(matrixA);
-	jdouble* temp = new jdouble[length];
+	jdouble* empty = new jdouble[length];
+	jdouble* newMatrixResult = envPow->GetDoubleArrayElements(matrixResult, &copMatrixResult);
+	memcpy(newMatrixResult, newMatrixA, length * sizeof(jdouble));
 
-	//Copy all from MatrixA to a temporary place
-	memcpy(temp, newMatrixA, length * sizeof(jdouble));
+	jdouble* exchange = new jdouble[length];
 
-    // do the multiply as in of
-	for (int i = 0; i < of; i++) {
-		doMultiply(temp,newMatrixA,newMatrixResult,matrixSize,matrixSize,matrixSize);
-		//swap the two arrays for next iteration
-		std::swap(temp, newMatrixResult);
+	for (jint i = 1; i < of; i++) {
+		doMultiply(newMatrixResult, newMatrixA, empty, matrixSize, matrixSize, matrixSize);
+
+		exchange = empty;
+		empty = newMatrixResult;
+		newMatrixResult = exchange;
 	}
+	// Set the new Array "return"
+    envPow->SetDoubleArrayRegion(matrixResult, 0, length, newMatrixResult);
 
 	// inform that we are finished
 	envPow->ReleaseDoubleArrayElements(matrixA, newMatrixA, JNI_ABORT);
-	envPow->ReleaseDoubleArrayElements(matrixREsult, newMatrixResult, 0);
-}
+	envPow->ReleaseDoubleArrayElements(matrixResult, newMatrixResult, 0);
 
+	delete[] empty;
+}
 
 JNIEXPORT void JNICALL Java_Matrix_multiplyC (
 JNIEnv *env, jobject jobj,
@@ -73,25 +73,14 @@ jint zeilenMatrixA, jint spaltenMatrixA, jint spaltenMatrixB){
 	jdouble* newMatrixB = env->GetDoubleArrayElements(matrixB, &copMatrixB);
 	jdouble* newMatrixResult = env->GetDoubleArrayElements(matrixResult, &copMatrixResult);
 
-
-	// Multiply like in JavaImpl --> Refactored to new Function doMultiply
-	/*
-	jdouble multiRes = 0.0;
-	for (int i = 0; i<zeilenMatrixA; i++) {
-		int c = i * spaltenMatrixA, d = i * spaltenMatrixB;
-		for (int j = 0; j<spaltenMatrixB; j++) {
-			multiRes = 0.0;
-			for (int k = 0; k<spaltenMatrixA; k++) {
-				multiRes = multiRes + newMatrixA[c + k] * newMatrixB[k * spaltenMatrixB + j];
-			}
-			newMatrixResult[d + j ] = multiRes;
-		}
-	}*/
-
 	doMultiply(newMatrixA, newMatrixB, newMatrixResult, zeilenMatrixA, spaltenMatrixA, spaltenMatrixB);
+	jint length = env->GetArrayLength(matrixResult);
+
+    // Set the new Array "return"
+    env->SetDoubleArrayRegion(matrixResult,0,length, newMatrixResult);
 
     //https://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/functions.html --> Release<PrimitveType>ArrayElements
-    env->ReleaseDoubleArrayElements(matrixA, newMatrixA, JNI_ABORT);
-    env->ReleaseDoubleArrayElements(matrixB, newMatrixB, JNI_ABORT);
-    env->ReleaseDoubleArrayElements(matrixResult, newMatrixResult, JNI_ABORT);
+    if(copMatrixA == JNI_TRUE){ env->ReleaseDoubleArrayElements(matrixA, newMatrixA, JNI_ABORT);}
+    if(copMatrixB == JNI_TRUE){ env->ReleaseDoubleArrayElements(matrixB, newMatrixB, JNI_ABORT);}
+    if(copMatrixResult == JNI_TRUE){ env->ReleaseDoubleArrayElements(matrixResult, newMatrixResult, JNI_ABORT);}
 }

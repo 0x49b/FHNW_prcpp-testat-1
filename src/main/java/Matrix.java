@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -12,8 +13,8 @@ public class Matrix {
     /**
      * Initialize Matrix with given Parameters incl. Matrix
      *
-     * @param row how many rows in matrix
-     * @param col how many cols in matrix
+     * @param row    how many rows in matrix
+     * @param col    how many cols in matrix
      * @param matrix an array holds the matrix
      */
     public Matrix(int row, int col, double[] matrix) {
@@ -25,8 +26,8 @@ public class Matrix {
     /**
      * Initialize Matrix with a fix fill
      *
-     * @param row how many rows in matrix
-     * @param col how many cols in matrix
+     * @param row  how many rows in matrix
+     * @param col  how many cols in matrix
      * @param fill initial value to fill the Matrix with
      */
     public Matrix(int row, int col, double fill) {
@@ -61,11 +62,11 @@ public class Matrix {
      * @return boolean
      */
     public boolean equals(Object o) {
-        //First check teh objects
+        //First check the objects
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Matrix)) {
             return false;
         }
         //Check if the two matrix arrays are equal
@@ -96,20 +97,39 @@ public class Matrix {
      * @return new Matrix
      */
     public Matrix multiply(Matrix m) {
-
         double[] resultm = new double[this.row * m.col];
-
-        // https://www.java-programmieren.com/matrix-multiplikation-java.php
-        for (int i = 0; i < this.row; i++) {
-            for (int d = 0; d < m.col; d++) {
-                for (int e = 0; e < m.row; e++) {
-                    resultm[i * m.col + d] += this.matrix[i * this.col + e] * m.matrix[e * m.col + d];
-                }
-            }
-        }
-
+        multiWithoutMatrix(this.matrix, m.matrix, resultm, this.row, this.col, m.col);
         return new Matrix(this.row, m.col, resultm);
     }
+
+    /**
+     * Do that multiply without generating a new matrix everytime
+     *
+     * @param matrixA    first matrix
+     * @param matrixB    second matrix
+     * @param matrixRes  result matrix (assigned to result Matrix Object)
+     * @param rowMatrixA row from Matrix A
+     * @param colMatrixA cols from Matrix A
+     * @param colMatrixB cols from Matrix B
+     * @return Matrix
+     */
+    private Matrix multiWithoutMatrix(double[] matrixA, double[] matrixB, double[] matrixRes, int rowMatrixA, int colMatrixA, int colMatrixB) {
+
+        double multiRes;
+
+        for (int i = 0; i < rowMatrixA; i++) {
+            int c = i * colMatrixA, d = i * colMatrixB;
+            for (int j = 0; j < colMatrixB; j++) {
+                multiRes = 0.0;
+                for (int k = 0; k < colMatrixA; k++) {
+                    multiRes = multiRes + matrixA[c + k] * matrixB[k * colMatrixB + j];
+                }
+                matrixRes[d + j] = multiRes;
+            }
+        }
+        return new Matrix(rowMatrixA, colMatrixB, matrixRes);
+    }
+
 
     /**
      * Multiply 2 Matrices the JNIWay
@@ -119,71 +139,55 @@ public class Matrix {
      */
     public Matrix multiplyCpp(Matrix m) {
         double[] resultm = new double[this.row * m.col];
-        for (int i = 0; i < resultm.length; i++) {
-            resultm[i] = 0.0;
-        }
         multiplyC(this.matrix, m.matrix, resultm, this.row, this.col, m.col);
         return new Matrix(this.row, this.col, resultm);
     }
 
     /**
      * Powering a matrix by a given exponent. First the exponent is checked if 0 or 1 --> from Tests
+     *
      * @param of exponent
      * @return new Matrix
      */
     public Matrix power(int of) {
-        Matrix zero = new Matrix(this.row,this.row,0);
-        double[] empty = zero.matrix; //emp
-        double[] result = this.matrix; // temp
+        Matrix zero = new Matrix(this.row, this.row, 0);
+
+        double[] empty = zero.matrix;
+        double[] result = new double[zero.matrix.length];
+        System.arraycopy(this.matrix, 0, result, 0, zero.matrix.length);
 
         // check if of is 0 or 1
-        if (of == 0) return generateEinheitsmatrix();// as from first Test in Tests.testPower we need an "Einheitsmatrix"
+        if (of == 0) return generateEinheitsmatrix();// first Test in Tests.testPower we need an "Einheitsmatrix"
         if (of == 1) return this;
         double[] exchange; //swap
 
-        for (int i = 1; i < of ; i++) {
-            multiWithoutMatrix(result,this.matrix,empty,this.row);
+        for (int i = 1; i < of; i++) {
+            multiWithoutMatrix(result, this.matrix, empty, this.row, this.col, this.col);
 
             // Exchange arrays on round
-            exchange = empty; empty = result; result = exchange;
+            exchange = empty;
+            empty = result;
+            result = exchange;
         }
 
         //return a new Matrix
-        return new Matrix(this.row,this.row, result);
+        return new Matrix(this.row, this.row, result);
     }
 
     /**
      * Powering with the use of native Implementation. Like the Java implementation the exponent gets checked first for 0 or 1
+     *
      * @param of exponen
      * @return new matrix
      */
     public Matrix powerCpp(int of) {
         if (of == 0) return generateEinheitsmatrix();
         if (of == 1) return this;
-        Matrix result = new Matrix(this.row,this.col,0);
+        Matrix result = new Matrix(this.row, this.col, 0);
         powerC(this.matrix, result.matrix, of, this.col);
         return result;
     }
 
-    /**
-     * Do that multiply without generating a new matrix everytime
-     * @param m1 first matrix
-     * @param m2 second matrix
-     * @param res result matrix
-     * @param length rows and cols
-     */
-    private void multiWithoutMatrix(double[] m1, double[] m2, double[] res, int length) {
-        for (int i = 0; i < length; i++) {
-            int c = i * length, d = i * length;
-            for (int j = 0; j < length; j++) {
-                double sum = 0.0;
-                for (int k = 0; k < length; k++) {
-                    sum = sum + m1[c + k] * m2[k * length + j];
-                }
-                res[d + j] = sum;
-            }
-        }
-    }
 
     /**
      * Generate an Einheitsmatrix like
@@ -206,27 +210,8 @@ public class Matrix {
     }
 
     /**
-     * Helper to deep copy an entire Matrix
-     * @deprecated
-     * @param m the matrix to copy
-     * @return new Matrix
-     */
-    @Deprecated
-    private Matrix copyMatrix(Matrix m) {
-        //new Matrix with size of original
-        Matrix copy = new Matrix(m.row, m.col, new double[m.matrix.length]);
-        //copy all values (--> memorypointer)
-        for (int i = 0; i < m.matrix.length; i++) {
-            copy.matrix[i] = m.matrix[i];
-        }
-        return copy;
-    }
-
-    /**
      * Native Functions to be implemented in cpp, method signatures given by lecturer
      */
     native void multiplyC(double[] a, double[] b, double[] r, int m, int n, int o);
     native void powerC(double[] a, double[] res, int k, int columns);
-
-
 }

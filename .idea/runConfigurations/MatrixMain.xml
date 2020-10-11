@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MatrixMain" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="MatrixMain" />
+    <module name="prcpp-testat1.main" />
+    <option name="VM_PARAMETERS" value="-Djava.library.path=$PROJECT_DIR$/src/main/java/" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

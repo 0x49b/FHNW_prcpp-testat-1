@@ -1,0 +1,15 @@
+[DEBUG] compile cpp library
+[DEBUG] compile Java
+[DEBUG] run java
+
+Performance Tests End-2-End for multiplication and exponentiate
+-------------------------------------------------------------------------
+Running Performance Test 500x400 Matrix multiply
+Java and C++ are equals
+Run JavaImpl takes : 4967ms
+Run CPPImpl takes : 4982ms
+
+Running Performance Test 250x250 Matrix pow by 93
+Java and C++ are equals
+Run JavaImpl takes : 1799ms
+Run CPPImpl takes : 1485ms

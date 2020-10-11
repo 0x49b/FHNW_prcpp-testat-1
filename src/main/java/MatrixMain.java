@@ -3,7 +3,7 @@ import java.util.Arrays;
 
 public class MatrixMain {
 
-    static{
+    static {
         System.loadLibrary("jnimatrix");
     }
 
@@ -13,8 +13,8 @@ public class MatrixMain {
         System.out.println("-------------------------------------------------------------------------");
         System.out.println("Running Performance Test 500x400 Matrix multiply");
 
-        Matrix m = new Matrix(500,6000);
-        Matrix n = new Matrix(6000,400);
+        Matrix m = new Matrix(500, 6000);
+        Matrix n = new Matrix(6000, 400);
 
         // Performance Test Java
         long startJava = System.currentTimeMillis();
@@ -26,14 +26,16 @@ public class MatrixMain {
         Matrix co = m.multiplyCpp(n);
         long cppEnd = System.currentTimeMillis();
 
-        System.out.println("Run JavaImpl takes : " + (endJava-startJava) + "ms");
-        System.out.println("Run CPPImpl takes : " + (cppEnd-cppStart) + "ms");
+
+        if(o.equals(co)) System.out.println("Java and C++ are equals");
+        System.out.println("Run JavaImpl takes : " + (endJava - startJava) + "ms");
+        System.out.println("Run CPPImpl takes : " + (cppEnd - cppStart) + "ms");
 
         System.out.println();
         System.out.println("Running Performance Test 250x250 Matrix pow by 93");
 
         // Powering Java
-        Matrix p = new Matrix(250,250);
+        Matrix p = new Matrix(250, 250);
         long startJavaPow = System.currentTimeMillis();
         Matrix q = p.power(93);
         long endJavaPow = System.currentTimeMillis();
@@ -44,20 +46,23 @@ public class MatrixMain {
         long endCPPPow = System.currentTimeMillis();
 
 
-        System.out.println("Run JavaImpl takes : " + (endJavaPow-startJavaPow) + "ms");
-        System.out.println("Run CPPImpl takes : " + (endCPPPow-startCPPPow) + "ms");
+        if(q.equals(cq)) System.out.println("Java and C++ are equals");
+        System.out.println("Run JavaImpl takes : " + (endJavaPow - startJavaPow) + "ms");
+        System.out.println("Run CPPImpl takes : " + (endCPPPow - startCPPPow) + "ms");
 
 
         /**
          * Performance Tests End-2-End for multiplication and exponentiate
          * -------------------------------------------------------------------------
          * Running Performance Test 500x400 Matrix multiply
-         * Run JavaImpl takes : 5185ms
-         * Run CPPImpl takes : 8816ms
+         * Java and C++ are equals
+         * Run JavaImpl takes : 4967ms
+         * Run CPPImpl takes : 4982ms
          *
          * Running Performance Test 250x250 Matrix pow by 93
-         * Run JavaImpl takes : 1654ms
-         * Run CPPImpl takes : 4321ms
+         * Java and C++ are equals
+         * Run JavaImpl takes : 1799ms
+         * Run CPPImpl takes : 1485ms
          */
 
     }

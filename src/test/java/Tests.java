@@ -1,12 +1,16 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
+// -Djava.library.path=/Users/florian/IdeaProjects/prcpp-testat1/src/main/java/
+
 class Tests {
+
 	Matrix a, b, c, d, p, q;
+
+	static {
+		System.loadLibrary("jnimatrix");
+	}
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -40,25 +44,25 @@ class Tests {
 		assertEquals(q.multiply(d), q);
 	}
 
-	/*
+	@Test
+	void testPower() {
+		assertEquals(p.power(0), d);
+		assertEquals(p.power(1), p);
+		assertEquals(p.power(7), q);
+		assertEquals(d.power(2), d);
+		assertEquals(d.power(111), d);
+	}
+
+
 	@Test
 	void testMultiplyCpp() {
 		assertEquals(a.multiplyCpp(b), c);
 		assertEquals(d.multiplyCpp(d), d);
 		assertEquals(q.multiplyCpp(d), q);
 	}
-*/
 
-	@Test
-	void testPower() {
-		assertEquals(p.power(0), d);
-		assertEquals(p.power(1), p);
-		// assertEquals(p.power(7), q);
-		assertEquals(d.power(2), d);
-		assertEquals(d.power(111), d);
-	}
 
-/*
+
 	@Test
 	void testPowerCpp() {
 		assertEquals(p.powerCpp(0), d);
@@ -67,6 +71,4 @@ class Tests {
 		assertEquals(d.powerCpp(2), d);
 		assertEquals(d.powerCpp(111), d);
 	}
-
- */
 }
