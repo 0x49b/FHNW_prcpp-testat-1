@@ -29,34 +29,33 @@ JNIEXPORT void JNICALL Java_Matrix_powerC
 (JNIEnv *envPow, jobject jobj1, jdoubleArray matrixA, jdoubleArray matrixResult, jint of, jint matrixSize)
 {
 
+
 	jboolean copMatrixA;
 	jboolean copMatrixResult;
 
-    // get the Array elements
-	jdouble* newMatrixA = envPow->GetDoubleArrayElements(matrixA, &copMatrixA);
-
+    // get length of originalArray
     jint length = envPow->GetArrayLength(matrixA);
-	jdouble* empty = new jdouble[length];
-	jdouble* newMatrixResult = envPow->GetDoubleArrayElements(matrixResult, &copMatrixResult);
-	memcpy(newMatrixResult, newMatrixA, length * sizeof(jdouble));
 
+    // create an empty Array
 	jdouble* exchange = new jdouble[length];
 
-	for (jint i = 1; i < of; i++) {
-		doMultiply(newMatrixResult, newMatrixA, empty, matrixSize, matrixSize, matrixSize);
+	// Get all the ArrayElements from input
+	jdouble* newMatrixA = envPow->GetDoubleArrayElements(matrixA, &copMatrixA);
+	jdouble* newMatrixResult = envPow->GetDoubleArrayElements(matrixResult, &copMatrixResult);
 
-		exchange = empty;
-		empty = newMatrixResult;
-		newMatrixResult = exchange;
+	//copy all from newMatrixA to empty
+	memcpy(exchange, newMatrixA, length * sizeof(jdouble));
+
+	for (jint i = 0; i < of; i++) {
+		doMultiply(exchange, newMatrixA, newMatrixResult, matrixSize, matrixSize, matrixSize);
+		std::swap(exchange, newMatrixResult);
 	}
-	// Set the new Array "return"
-    envPow->SetDoubleArrayRegion(matrixResult, 0, length, newMatrixResult);
 
 	// inform that we are finished
 	envPow->ReleaseDoubleArrayElements(matrixA, newMatrixA, JNI_ABORT);
 	envPow->ReleaseDoubleArrayElements(matrixResult, newMatrixResult, 0);
 
-	delete[] empty;
+	delete[] exchange;
 }
 
 JNIEXPORT void JNICALL Java_Matrix_multiplyC (
@@ -76,11 +75,9 @@ jint zeilenMatrixA, jint spaltenMatrixA, jint spaltenMatrixB){
 	doMultiply(newMatrixA, newMatrixB, newMatrixResult, zeilenMatrixA, spaltenMatrixA, spaltenMatrixB);
 	jint length = env->GetArrayLength(matrixResult);
 
-    // Set the new Array "return"
-    env->SetDoubleArrayRegion(matrixResult,0,length, newMatrixResult);
 
     //https://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/functions.html --> Release<PrimitveType>ArrayElements
     if(copMatrixA == JNI_TRUE){ env->ReleaseDoubleArrayElements(matrixA, newMatrixA, JNI_ABORT);}
     if(copMatrixB == JNI_TRUE){ env->ReleaseDoubleArrayElements(matrixB, newMatrixB, JNI_ABORT);}
-    if(copMatrixResult == JNI_TRUE){ env->ReleaseDoubleArrayElements(matrixResult, newMatrixResult, JNI_ABORT);}
+    if(copMatrixResult == JNI_TRUE){ env->ReleaseDoubleArrayElements(matrixResult, newMatrixResult, 0);}
 }

@@ -56,13 +56,17 @@ public class MatrixMain {
          * -------------------------------------------------------------------------
          * Running Performance Test 500x400 Matrix multiply
          * Java and C++ are equals
-         * Run JavaImpl takes : 4967ms
-         * Run CPPImpl takes : 4982ms
+         * Run JavaImpl takes : 4990ms
+         * Run CPPImpl takes : 5648ms
          *
          * Running Performance Test 250x250 Matrix pow by 93
+         * Check for Array addresses
+         * result Array: [D@5cbc508c
+         * this.matrix Array: [D@3419866c
+         * zero Array: [D@63e31ee
          * Java and C++ are equals
-         * Run JavaImpl takes : 1799ms
-         * Run CPPImpl takes : 1485ms
+         * Run JavaImpl takes : 1883ms
+         * Run CPPImpl takes : 1554ms
          */
 
     }

@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -156,6 +155,14 @@ public class Matrix {
         double[] result = new double[zero.matrix.length];
         System.arraycopy(this.matrix, 0, result, 0, zero.matrix.length);
 
+        /**
+         * Check for different arrays
+         */
+        System.out.println("Check for Array addresses");
+        System.out.print("result Array: ");System.out.println(result);
+        System.out.print("this.matrix Array: ");System.out.println(this.matrix);
+        System.out.print("zero Array: ");System.out.println(zero.matrix);
+
         // check if of is 0 or 1
         if (of == 0) return generateEinheitsmatrix();// first Test in Tests.testPower we need an "Einheitsmatrix"
         if (of == 1) return this;
@@ -173,6 +180,7 @@ public class Matrix {
         //return a new Matrix
         return new Matrix(this.row, this.row, result);
     }
+
 
     /**
      * Powering with the use of native Implementation. Like the Java implementation the exponent gets checked first for 0 or 1
@@ -213,5 +221,6 @@ public class Matrix {
      * Native Functions to be implemented in cpp, method signatures given by lecturer
      */
     native void multiplyC(double[] a, double[] b, double[] r, int m, int n, int o);
+
     native void powerC(double[] a, double[] res, int k, int columns);
 }
